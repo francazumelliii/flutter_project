@@ -1,21 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_project/core/data/domain/models/album.dart';
+import 'package:flutter_project/core/data/domain/models/media_collection.dart';
+import 'package:flutter_project/core/widgets/albums/collection_header.dart';
+import 'package:flutter_project/core/widgets/audio_player/global_audio_player.dart';
+import 'package:flutter_project/core/widgets/lists/track_list.dart';
 import 'package:flutter_project/core/data/domain/controllers/audio_player_controller.dart';
 import 'package:flutter_project/core/data/services/data_service.dart';
-import 'package:flutter_project/core/widgets/albums/album_header.dart';
-import 'package:flutter_project/core/widgets/lists/track_list.dart';
 import 'package:provider/provider.dart';
 
-class AlbumContent extends StatefulWidget {
-  final Album album;
+class CollectionContent extends StatefulWidget {
+  final MediaCollection collection;
 
-  const AlbumContent({Key? key, required this.album}) : super(key: key);
+  const CollectionContent({super.key, required this.collection});
 
   @override
-  State<AlbumContent> createState() => _AlbumContentState();
+  State<CollectionContent> createState() => _CollectionContentState();
 }
 
-class _AlbumContentState extends State<AlbumContent> {
+class _CollectionContentState extends State<CollectionContent> {
   List<AudioTrack> tracks = [];
 
   @override
@@ -26,19 +27,21 @@ class _AlbumContentState extends State<AlbumContent> {
 
   Future<void> _loadTracks() async {
     final dataService = DataService(baseUrl: 'https://corsproxy.io/?https://api.deezer.com');
-    final response = await dataService.get('/album/${widget.album.id}/tracks');
+    final endpoint = widget.collection.type == 'album'
+        ? '/album/${widget.collection.id}/tracks'
+        : '/playlist/${widget.collection.id}/tracks';
 
+    final response = await dataService.get(endpoint);
     final loadedTracks = (response['data'] as List<dynamic>).map<AudioTrack>((track) {
       return AudioTrack(
-        imageUrl: widget.album.coverUrl,
+        imageUrl: widget.collection.coverUrl,
         title: track['title'] ?? '',
-        subtitle: widget.album.artist,
+        subtitle: widget.collection.subtitle,
         audioPreviewUrl: track['preview'] ?? '',
       );
     }).toList();
 
     setState(() => tracks = loadedTracks);
-
     context.read<AudioPlayerController>().setTracks(loadedTracks);
   }
 
@@ -46,18 +49,18 @@ class _AlbumContentState extends State<AlbumContent> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
-      appBar: AppBar(backgroundColor: Colors.transparent, title: const Text('Album')),
+      appBar: AppBar(backgroundColor: Colors.transparent, title: Text(widget.collection.title)),
       body: tracks.isEmpty
           ? const Center(child: CircularProgressIndicator())
           : SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            AlbumHeader(
-              coverUrl: widget.album.coverUrl,
-              title: widget.album.title,
-              artist: widget.album.artist,
-              onPlayAlbum: () {
+            CollectionHeader(
+              coverUrl: widget.collection.coverUrl,
+              title: widget.collection.title,
+              subtitle: widget.collection.subtitle,
+              onPlayCollection: () {
                 if (tracks.isNotEmpty) {
                   context.read<AudioPlayerController>().playTrack(0);
                 }
@@ -67,6 +70,8 @@ class _AlbumContentState extends State<AlbumContent> {
           ],
         ),
       ),
+      bottomNavigationBar: const GlobalAudioPlayer(),
     );
   }
+
 }

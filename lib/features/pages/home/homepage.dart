@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_project/features/pages/albums/albumpage.dart';
+import 'package:flutter_project/features/pages/playlists/playlistpage.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/data/domain/controllers/audio_player_controller.dart';
 import '../../../core/data/domain/models/album.dart';
+import '../../../core/data/domain/models/media_collection.dart';
 import '../../../core/data/services/data_service.dart';
 import '../../../core/widgets/audio_player/audio_player.dart';
 import 'home_content.dart';
@@ -17,15 +19,16 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   List<Album> albums = [];
+  List<MediaCollection> playlists = [];
+  List<AudioTrack> homeTracks = [];
 
   @override
   void initState() {
     super.initState();
     _loadTracks();
     _loadAlbums();
+    _loadPlaylists();
   }
-
-  List<AudioTrack> homeTracks = [];
 
   Future<void> _loadTracks() async {
     final dataService = DataService(baseUrl: 'https://corsproxy.io/?https://api.deezer.com');
@@ -41,19 +44,8 @@ class _HomePageState extends State<HomePage> {
     }).toList();
 
     homeTracks = tracks;
-
     context.read<AudioPlayerController>().setTracks(tracks);
   }
-
-  void _goToAlbum(BuildContext context, int albumId) {
-    Navigator.of(context).push(
-      MaterialPageRoute(builder: (_) => AlbumPage(albumId: albumId)),
-    ).then((_) {
-      // ripristina i top tracks salvati
-      context.read<AudioPlayerController>().setTracks(homeTracks);
-    });
-  }
-
 
   Future<void> _loadAlbums() async {
     final dataService = DataService(baseUrl: 'https://corsproxy.io/?https://api.deezer.com');
@@ -73,6 +65,40 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+  Future<void> _loadPlaylists() async {
+    final dataService = DataService(baseUrl: 'https://corsproxy.io/?https://api.deezer.com');
+    final response = await dataService.get('/chart/0/playlists');
+
+    final topPlaylists = (response['data'] as List<dynamic>).map<MediaCollection>((playlistJson) {
+      return MediaCollection(
+        id: playlistJson['id'],
+        title: playlistJson['title'] ?? '',
+        subtitle: playlistJson['creator']?['name'] ?? '',
+        coverUrl: playlistJson['picture_xl'] ?? '',
+        type: 'playlist',
+      );
+    }).toList();
+
+    setState(() {
+      playlists = topPlaylists;
+    });
+  }
+
+  void _goToAlbum(BuildContext context, int albumId) {
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (_) => AlbumPage(albumId: albumId)),
+    ).then((_) {
+      context.read<AudioPlayerController>().setTracks(homeTracks);
+    });
+  }
+
+  void _goToPlaylist(BuildContext context, int playlistId) {
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (_) => PlaylistPage(playlistId: playlistId)),
+    ).then((_) {
+      context.read<AudioPlayerController>().setTracks(homeTracks);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -104,9 +130,18 @@ class _HomePageState extends State<HomePage> {
                 'albumId': album.id.toString(),
               })
                   .toList(),
+              playlists: playlists
+                  .map((playlist) => {
+                'imageUrl': playlist.coverUrl,
+                'title': playlist.title,
+                'subtitle': playlist.subtitle,
+                'playlistId': playlist.id.toString(),
+              })
+                  .toList(),
               currentIndex: audioController.currentIndex,
               onTrackSelected: audioController.playTrack,
               onAlbumTap: (albumId) => _goToAlbum(context, albumId),
+              onPlaylistTap: (playlistId) => _goToPlaylist(context, playlistId),
             ),
           ),
           if (audioController.currentTrack != null)

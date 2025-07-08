@@ -1,20 +1,19 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_project/core/widgets/buttons/play_button.dart';
 
-class AlbumHeader extends StatelessWidget {
+class CollectionHeader extends StatelessWidget {
   final String coverUrl;
   final String title;
-  final String artist;
-  final VoidCallback onPlayAlbum;
+  final String subtitle;
+  final VoidCallback onPlayCollection;
 
-  const AlbumHeader({
-    Key? key,
+  const CollectionHeader({
+    super.key,
     required this.coverUrl,
     required this.title,
-    required this.artist,
-    required this.onPlayAlbum,
-  }) : super(key: key);
+    required this.subtitle,
+    required this.onPlayCollection,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -41,21 +40,20 @@ class AlbumHeader extends StatelessWidget {
                 Text(
                   title,
                   style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                  ),
+                      color: Colors.white,
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  artist,
+                  subtitle,
                   style: const TextStyle(
                     color: Colors.grey,
                     fontSize: 18,
                   ),
                 ),
                 const SizedBox(height: 16),
-                PlayButton(onPressed: onPlayAlbum),
+                PlayButton(onPressed: onPlayCollection),
               ],
             ),
           ),
