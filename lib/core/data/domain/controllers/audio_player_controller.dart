@@ -52,3 +52,4 @@ class AudioPlayerController with ChangeNotifier {
 
   List<AudioTrack> get tracks => List.unmodifiable(_tracks);
 }
+

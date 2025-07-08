@@ -42,7 +42,7 @@ class ItemTile extends StatelessWidget {
                   if (isSelected)
                     Positioned.fill(
                       child: Opacity(
-                        opacity: 0.8, // Opzionale: regola la trasparenza della GIF
+                        opacity: 0.8,
                         child: Image.asset(
                           soundGifPath,
                           fit: BoxFit.cover,

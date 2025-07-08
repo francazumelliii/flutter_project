@@ -8,7 +8,7 @@ class ItemImage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ClipRRect(
-      borderRadius: BorderRadius.circular(8),
+      borderRadius: BorderRadius.circular(3),
       child: Image.network(
         imageUrl,
         width: 120,
