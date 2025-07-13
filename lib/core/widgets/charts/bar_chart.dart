@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
 
 import '../../../core/data/domain/controllers/audio_player_controller.dart';
+import '../../data/domain/models/audio_track.dart';
 
 class BarChartWidget extends StatelessWidget {
   final List<AudioTrack> tracks;

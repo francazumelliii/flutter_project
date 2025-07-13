@@ -6,14 +6,15 @@ import 'core/widgets/tabs/base_tab.dart';
 import 'features/pages/analytics/analyticspage.dart';
 import 'features/pages/search/searchpage.dart';
 
-void main() {
-  runApp(
-    ChangeNotifierProvider(
-      create: (_) => AudioPlayerController(),
-      child: const MyApp(),
-    ),
-  );
-}
+  void main() {
+    runApp(
+      ChangeNotifierProvider(
+        create: (_) => AudioPlayerController(),
+        child: const MyApp(),
+      ),
+    );
+  }
+
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});

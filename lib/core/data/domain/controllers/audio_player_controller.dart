@@ -1,59 +1,81 @@
-import 'package:flutter/material.dart';
-class AudioTrack {
-  final String title;
-  final String subtitle;
-  final String imageUrl;
-  final String audioPreviewUrl;
-  final int albumId;
+import 'package:flutter/cupertino.dart';
+import 'package:just_audio/just_audio.dart';
 
-  AudioTrack({
-    required this.title,
-    required this.subtitle,
-    required this.imageUrl,
-    required this.audioPreviewUrl,
-    required this.albumId,
-  });
+import '../models/audio_track.dart';
 
-  factory AudioTrack.fromJson(Map<String, dynamic> json) {
-    return AudioTrack(
-      title: json['title'] ?? '',
-      subtitle: json['artist']?['name'] ?? '',
-      imageUrl: json['album']?['cover_medium'] ?? '',
-      audioPreviewUrl: json['preview'] ?? '',
-      albumId: json['album']?['id'] ?? 0,
-    );
-  }
-}
-
-
-
-/// CONTROLLER: gestisce lo stato del player e delle tracce
 class AudioPlayerController with ChangeNotifier {
+  final AudioPlayer _player = AudioPlayer();
+
   List<AudioTrack> _tracks = [];
   int _currentIndex = -1;
+  bool _isPlaying = false;
+
+  AudioPlayerController() {
+    _player.playerStateStream.listen((state) {
+      final playing = state.playing;
+      if (playing != _isPlaying) {
+        _isPlaying = playing;
+        notifyListeners();
+      }
+    });
+  }
+
+  AudioPlayer get audioPlayer => _player;
 
   void setTracks(List<AudioTrack> tracks) {
     _tracks = tracks;
     _currentIndex = -1;
+    _isPlaying = false;
     notifyListeners();
   }
 
-  void playTrack(int index) {
+  Future<void> playTrack(int index) async {
     if (index < 0 || index >= _tracks.length) return;
-    _currentIndex = index;
+
+    final url = _tracks[index].audioPreviewUrl;
+    print('PlayTrack called: index=$index, url=$url');
+
+    if (url.isEmpty) {
+      print('URL is empty, cannot play.');
+      return;
+    }
+
+    try {
+      await _player.stop();
+      _currentIndex = index;
+
+      await _player.setUrl(url);
+      await _player.play();
+      _isPlaying = true;
+      notifyListeners();
+    } catch (e) {
+      print('Errore nel playTrack: $e');
+    }
+  }
+
+
+  Future<void> pause() async {
+    await _player.pause();
+    _isPlaying = false;
     notifyListeners();
   }
 
-  void nextTrack() {
+  Future<void> resume() async {
+    await _player.play();
+    _isPlaying = true;
+    notifyListeners();
+  }
+
+  Future<void> nextTrack() async {
     if (_tracks.isEmpty) return;
     _currentIndex = (_currentIndex + 1) % _tracks.length;
-    notifyListeners();
+    await playTrack(_currentIndex);
   }
 
-  void previousTrack() {
+  Future<void> previousTrack() async {
     if (_tracks.isEmpty) return;
     _currentIndex = (_currentIndex - 1 + _tracks.length) % _tracks.length;
-    notifyListeners();
+    await playTrack(_currentIndex);
   }
 
   AudioTrack? get currentTrack =>
@@ -62,7 +84,11 @@ class AudioPlayerController with ChangeNotifier {
           : null;
 
   int get currentIndex => _currentIndex;
-
+  bool get isPlaying => _isPlaying;
   List<AudioTrack> get tracks => List.unmodifiable(_tracks);
-}
 
+  void dispose() {
+    _player.dispose();
+    super.dispose();
+  }
+}

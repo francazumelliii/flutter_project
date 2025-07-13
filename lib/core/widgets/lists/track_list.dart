@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../data/domain/controllers/audio_player_controller.dart';
+import '../../data/domain/models/audio_track.dart';
 
 class TrackList extends StatelessWidget {
   final List<AudioTrack> tracks;

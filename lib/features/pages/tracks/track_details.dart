@@ -3,6 +3,8 @@ import 'package:flutter_project/core/data/domain/controllers/audio_player_contro
 import 'package:flutter_project/core/widgets/audio_player/audio_player.dart';
 import 'package:provider/provider.dart';
 
+import '../../../core/data/domain/models/audio_track.dart';
+
 class TrackDetailPage extends StatelessWidget {
   final AudioTrack track;
 
@@ -25,11 +27,11 @@ class TrackDetailPage extends StatelessWidget {
           Text(track.title, style: const TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold)),
           Text(track.subtitle, style: const TextStyle(color: Colors.white70, fontSize: 18)),
           const SizedBox(height: 20),
-          CustomAudioPlayer(
-            audioUrl: track.audioPreviewUrl,
-            onNext: () {},
-            onPrevious: () {},
-          ),
+            Container(
+              color: Colors.black87,
+              padding: const EdgeInsets.symmetric(vertical: 8),
+              child: CustomAudioPlayer(controller: audioController),
+            ),
         ],
       ),
     );

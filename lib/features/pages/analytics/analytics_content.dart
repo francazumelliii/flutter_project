@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/data/domain/controllers/audio_player_controller.dart';
+import '../../../core/data/domain/models/audio_track.dart';
 import '../../../core/widgets/charts/line_chart.dart';
 import '../../../core/widgets/charts/pie_chart.dart';
 import '../../../core/widgets/charts/top_tracks_chart.dart';

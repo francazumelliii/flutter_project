@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_project/features/pages/albums/albumpage.dart';
-import 'package:flutter_project/features/pages/playlists/playlistpage.dart';
+import 'package:flutter_project/features/pages/home/home_content.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/data/domain/controllers/audio_player_controller.dart';
+import '../../../core/data/domain/models/audio_track.dart';
 import '../../../core/data/domain/models/album.dart';
 import '../../../core/data/domain/models/media_collection.dart';
 import '../../../core/data/services/data_service.dart';
 import '../../../core/widgets/audio_player/audio_player.dart';
-import 'home_content.dart';
+import '../albums/albumpage.dart';
+import '../playlists/playlistpage.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -18,23 +19,26 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  List<AudioTrack> tracks = [];
   List<Album> albums = [];
   List<MediaCollection> playlists = [];
-  List<AudioTrack> homeTracks = [];
+
+  bool loading = true;
 
   @override
   void initState() {
     super.initState();
-    _loadTracks();
-    _loadAlbums();
-    _loadPlaylists();
+    _loadAll();
   }
 
-  Future<void> _loadTracks() async {
+  Future<void> _loadAll() async {
     final dataService = DataService(baseUrl: 'https://corsproxy.io/?https://api.deezer.com');
-    final response = await dataService.get('/chart/0/tracks');
 
-    final tracks = (response['data'] as List).map((track) {
+    final tracksResponse = await dataService.get('/chart/0/tracks');
+    final albumsResponse = await dataService.get('/chart/0/albums');
+    final playlistsResponse = await dataService.get('/chart/0/playlists');
+
+    final loadedTracks = (tracksResponse['data'] as List).map((track) {
       return AudioTrack(
         title: track['title'] ?? '',
         subtitle: track['artist']?['name'] ?? '',
@@ -44,15 +48,7 @@ class _HomePageState extends State<HomePage> {
       );
     }).toList();
 
-    homeTracks = tracks;
-    context.read<AudioPlayerController>().setTracks(tracks);
-  }
-
-  Future<void> _loadAlbums() async {
-    final dataService = DataService(baseUrl: 'https://corsproxy.io/?https://api.deezer.com');
-    final response = await dataService.get('/chart/0/albums');
-
-    final topAlbums = (response['data'] as List<dynamic>).map<Album>((albumJson) {
+    final loadedAlbums = (albumsResponse['data'] as List).map((albumJson) {
       return Album(
         id: albumJson['id'],
         title: albumJson['title'] ?? '',
@@ -61,16 +57,7 @@ class _HomePageState extends State<HomePage> {
       );
     }).toList();
 
-    setState(() {
-      albums = topAlbums;
-    });
-  }
-
-  Future<void> _loadPlaylists() async {
-    final dataService = DataService(baseUrl: 'https://corsproxy.io/?https://api.deezer.com');
-    final response = await dataService.get('/chart/0/playlists');
-
-    final topPlaylists = (response['data'] as List<dynamic>).map<MediaCollection>((playlistJson) {
+    final loadedPlaylists = (playlistsResponse['data'] as List).map((playlistJson) {
       return MediaCollection(
         id: playlistJson['id'],
         title: playlistJson['title'] ?? '',
@@ -81,81 +68,82 @@ class _HomePageState extends State<HomePage> {
     }).toList();
 
     setState(() {
-      playlists = topPlaylists;
+      tracks = loadedTracks;
+      albums = loadedAlbums;
+      playlists = loadedPlaylists;
+      loading = false;
     });
+
+    context.read<AudioPlayerController>().setTracks(loadedTracks);
   }
 
-  void _goToAlbum(BuildContext context, int albumId) {
-    Navigator.of(context).push(
-      MaterialPageRoute(builder: (_) => AlbumPage(albumId: albumId)),
-    ).then((_) {
-      context.read<AudioPlayerController>().setTracks(homeTracks);
-    });
+  void onTrackSelected(int index) {
+    context.read<AudioPlayerController>().playTrack(index);
   }
 
-  void _goToPlaylist(BuildContext context, int playlistId) {
-    Navigator.of(context).push(
-      MaterialPageRoute(builder: (_) => PlaylistPage(playlistId: playlistId)),
-    ).then((_) {
-      context.read<AudioPlayerController>().setTracks(homeTracks);
-    });
+  void onAlbumTap(int albumId) {
+    Navigator.of(context).push(MaterialPageRoute(builder: (_) => AlbumPage(albumId: albumId)));
+  }
+
+  void onPlaylistTap(int playlistId) {
+    Navigator.of(context).push(MaterialPageRoute(builder: (_) => PlaylistPage(playlistId: playlistId)));
   }
 
   @override
   Widget build(BuildContext context) {
     final audioController = context.watch<AudioPlayerController>();
 
-    if (audioController.tracks.isEmpty) {
-      return const Center(child: CircularProgressIndicator());
+    if (loading) {
+      return Scaffold(
+        appBar: AppBar(title: const Text('Home')),
+        backgroundColor: Colors.black,
+        body: const Center(child: CircularProgressIndicator()),
+      );
     }
 
     return Scaffold(
+      appBar: AppBar(title: const Text('Home')),
       backgroundColor: Colors.black,
       body: Column(
         children: [
           Expanded(
             child: HomeContent(
-              tracks: audioController.tracks
+              tracks: tracks
                   .map((t) => {
                 'imageUrl': t.imageUrl,
                 'title': t.title,
                 'subtitle': t.subtitle,
                 'audioPreviewUrl': t.audioPreviewUrl,
-                'albumId': t.albumId.toString(),  // <-- toString qui
+                'albumId': t.albumId.toString(),
               })
                   .toList(),
               albums: albums
-                  .map((album) => {
-                'imageUrl': album.coverUrl,
-                'title': album.title,
-                'subtitle': album.artist,
-                'albumId': album.id.toString(),  // <-- toString qui
+                  .map((a) => {
+                'imageUrl': a.coverUrl,
+                'title': a.title,
+                'subtitle': a.artist,
+                'albumId': a.id.toString(),
               })
                   .toList(),
               playlists: playlists
-                  .map((playlist) => {
-                'imageUrl': playlist.coverUrl,
-                'title': playlist.title,
-                'subtitle': playlist.subtitle,
-                'playlistId': playlist.id.toString(),  // <-- toString qui
+                  .map((p) => {
+                'imageUrl': p.coverUrl,
+                'title': p.title,
+                'subtitle': p.subtitle,
+                'playlistId': p.id.toString(),
               })
                   .toList(),
               currentIndex: audioController.currentIndex,
-              onTrackSelected: audioController.playTrack,
-              onAlbumTap: (albumId) => _goToAlbum(context, albumId),
-              onPlaylistTap: (playlistId) => _goToPlaylist(context, playlistId),
+              onTrackSelected: onTrackSelected,
+              onAlbumTap: onAlbumTap,
+              onPlaylistTap: onPlaylistTap,
             ),
-
           ),
           if (audioController.currentTrack != null)
             Container(
               color: Colors.black87,
               padding: const EdgeInsets.symmetric(vertical: 8),
-              child: CustomAudioPlayer(
-                audioUrl: audioController.currentTrack!.audioPreviewUrl,
-                onNext: audioController.nextTrack,
-                onPrevious: audioController.previousTrack,
-              ),
+              child: CustomAudioPlayer(controller: audioController),
             ),
         ],
       ),

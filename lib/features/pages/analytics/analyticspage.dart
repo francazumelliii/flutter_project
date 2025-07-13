@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../core/data/domain/controllers/audio_player_controller.dart';
+import '../../../core/data/domain/models/audio_track.dart';
 import '../../../core/data/services/data_service.dart';
 import 'analytics_content.dart';
 

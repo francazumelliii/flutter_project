@@ -8,15 +8,12 @@ class GlobalAudioPlayer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final audioController = context.watch<AudioPlayerController>();
-    final currentTrack = audioController.currentTrack;
+    final controller = context.watch<AudioPlayerController>();
+    final currentTrack = controller.currentTrack;
 
     if (currentTrack == null) return const SizedBox.shrink();
 
-    return CustomAudioPlayer(
-      audioUrl: currentTrack.audioPreviewUrl,
-      onNext: audioController.nextTrack,
-      onPrevious: audioController.previousTrack,
-    );
+    return CustomAudioPlayer(controller: controller);
   }
 }
+

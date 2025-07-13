@@ -9,6 +9,8 @@ import 'package:flutter_project/core/data/domain/controllers/audio_player_contro
 import 'package:flutter_project/core/data/services/data_service.dart';
 import 'package:provider/provider.dart';
 
+import '../../../core/data/domain/models/audio_track.dart';
+
 class CollectionContent extends StatefulWidget {
   final MediaCollection collection;
 
@@ -35,7 +37,6 @@ class _CollectionContentState extends State<CollectionContent> {
         : '/playlist/${widget.collection.id}/tracks';
 
     final response = await dataService.get(endpoint);
-    print('Response: $response');  // <<-- debug qui
 
     if (response == null || response['data'] == null) {
       print('Nessuna traccia trovata.');
@@ -45,7 +46,6 @@ class _CollectionContentState extends State<CollectionContent> {
     final List<dynamic> dataList = response['data'];
 
     final List<AudioTrack> loadedTracks = dataList.map((item) {
-      print('Track item: $item');  // <<-- debug singolo elemento
       return AudioTrack.fromJson(item);
     }).toList();
 

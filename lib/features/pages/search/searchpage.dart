@@ -5,6 +5,7 @@ import 'package:flutter_project/core/data/domain/controllers/audio_player_contro
 
 import 'package:flutter_project/core/data/services/data_service.dart';
 
+import '../../../core/data/domain/models/audio_track.dart';
 import '../../../core/widgets/lists/list_item.dart';
 import '../albums/albumpage.dart';
 

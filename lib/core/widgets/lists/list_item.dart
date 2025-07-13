@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../../data/domain/controllers/audio_player_controller.dart';
+import '../../data/domain/models/audio_track.dart';
 import '../icons/play_icon.dart';
 
 class TrackListItem extends StatelessWidget {
