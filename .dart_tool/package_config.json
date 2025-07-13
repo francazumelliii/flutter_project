@@ -9,9 +9,9 @@
     },
     {
       "name": "audio_session",
-      "rootUri": "file:///Users/francazumelli/.pub-cache/hosted/pub.dev/audio_session-0.1.25",
+      "rootUri": "file:///Users/francazumelli/.pub-cache/hosted/pub.dev/audio_session-0.2.2",
       "packageUri": "lib/",
-      "languageVersion": "3.4"
+      "languageVersion": "3.6"
     },
     {
       "name": "boolean_selector",
@@ -24,6 +24,18 @@
       "rootUri": "file:///Users/francazumelli/.pub-cache/hosted/pub.dev/characters-1.4.0",
       "packageUri": "lib/",
       "languageVersion": "3.4"
+    },
+    {
+      "name": "charts_common",
+      "rootUri": "file:///Users/francazumelli/.pub-cache/hosted/pub.dev/charts_common-0.12.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
+      "name": "charts_flutter",
+      "rootUri": "file:///Users/francazumelli/.pub-cache/hosted/pub.dev/charts_flutter-0.12.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
     },
     {
       "name": "clock",
@@ -50,6 +62,12 @@
       "languageVersion": "3.1"
     },
     {
+      "name": "equatable",
+      "rootUri": "file:///Users/francazumelli/.pub-cache/hosted/pub.dev/equatable-2.0.7",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
       "name": "fake_async",
       "rootUri": "file:///Users/francazumelli/.pub-cache/hosted/pub.dev/fake_async-1.3.3",
       "packageUri": "lib/",
@@ -68,6 +86,12 @@
       "languageVersion": "3.1"
     },
     {
+      "name": "fl_chart",
+      "rootUri": "file:///Users/francazumelli/.pub-cache/hosted/pub.dev/fl_chart-1.0.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.6"
+    },
+    {
       "name": "flutter",
       "rootUri": "file:///Users/francazumelli/Dev/flutter/packages/flutter",
       "packageUri": "lib/",
@@ -75,9 +99,9 @@
     },
     {
       "name": "flutter_lints",
-      "rootUri": "file:///Users/francazumelli/.pub-cache/hosted/pub.dev/flutter_lints-5.0.0",
+      "rootUri": "file:///Users/francazumelli/.pub-cache/hosted/pub.dev/flutter_lints-6.0.0",
       "packageUri": "lib/",
-      "languageVersion": "3.5"
+      "languageVersion": "3.8"
     },
     {
       "name": "flutter_test",
@@ -104,10 +128,16 @@
       "languageVersion": "3.4"
     },
     {
-      "name": "just_audio",
-      "rootUri": "file:///Users/francazumelli/.pub-cache/hosted/pub.dev/just_audio-0.9.46",
+      "name": "intl",
+      "rootUri": "file:///Users/francazumelli/.pub-cache/hosted/pub.dev/intl-0.17.0",
       "packageUri": "lib/",
-      "languageVersion": "3.0"
+      "languageVersion": "2.12"
+    },
+    {
+      "name": "just_audio",
+      "rootUri": "file:///Users/francazumelli/.pub-cache/hosted/pub.dev/just_audio-0.10.4",
+      "packageUri": "lib/",
+      "languageVersion": "3.6"
     },
     {
       "name": "just_audio_platform_interface",
@@ -141,9 +171,15 @@
     },
     {
       "name": "lints",
-      "rootUri": "file:///Users/francazumelli/.pub-cache/hosted/pub.dev/lints-5.1.1",
+      "rootUri": "file:///Users/francazumelli/.pub-cache/hosted/pub.dev/lints-6.0.0",
       "packageUri": "lib/",
-      "languageVersion": "3.6"
+      "languageVersion": "3.8"
+    },
+    {
+      "name": "logging",
+      "rootUri": "file:///Users/francazumelli/.pub-cache/hosted/pub.dev/logging-1.3.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.4"
     },
     {
       "name": "matcher",
@@ -231,7 +267,7 @@
     },
     {
       "name": "rxdart",
-      "rootUri": "file:///Users/francazumelli/.pub-cache/hosted/pub.dev/rxdart-0.27.7",
+      "rootUri": "file:///Users/francazumelli/.pub-cache/hosted/pub.dev/rxdart-0.28.0",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },

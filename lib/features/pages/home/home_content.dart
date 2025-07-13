@@ -26,28 +26,16 @@ class HomeContent extends StatelessWidget {
     return ListView(
       shrinkWrap: true,
       children: [
-        const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
-          child: Text(
-            'Popular Tracks',
-            style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold, color: Colors.white),
-          ),
-        ),
+
         ItemSlider(
-          title: '',
+          title: 'Top Tracks',
           items: tracks,
           currentIndex: currentIndex,
           onTap: onTrackSelected,
         ),
-        const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
-          child: Text(
-            'Top Albums',
-            style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold, color: Colors.white),
-          ),
-        ),
+
         ItemSlider(
-          title: '',
+          title: 'Top Albums',
           items: albums,
           currentIndex: -1,
           onTap: (index) {
@@ -55,15 +43,9 @@ class HomeContent extends StatelessWidget {
             onAlbumTap(albumId);
           },
         ),
-        const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
-          child: Text(
-            'Top Playlists',
-            style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold, color: Colors.white),
-          ),
-        ),
+
         ItemSlider(
-          title: '',
+          title: 'Top Playlists',
           items: playlists,
           currentIndex: -1,
           onTap: (index) {

@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_project/core/data/domain/models/media_collection.dart';
 import 'package:flutter_project/core/data/services/data_service.dart';
@@ -11,46 +10,21 @@ class AlbumPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
+    return FutureBuilder<dynamic>(
       future: DataService(baseUrl: 'https://corsproxy.io/?https://api.deezer.com').get('/album/$albumId'),
       builder: (context, snapshot) {
-        if (!snapshot.hasData) return const Center(child: CircularProgressIndicator());
+        if (snapshot.connectionState != ConnectionState.done) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        if (snapshot.hasError) {
+          return Center(child: Text('Errore: ${snapshot.error}'));
+        }
+        if (!snapshot.hasData || snapshot.data == null) {
+          return const Center(child: Text('Nessun dato trovato'));
+        }
+
         final data = snapshot.data as Map<String, dynamic>;
-
-        final collection = MediaCollection(
-          id: albumId,
-          title: data['title'] ?? '',
-          subtitle: data['artist']['name'] ?? '',
-          coverUrl: data['cover_xl'] ?? '',
-          type: 'album',
-        );
-
-        return CollectionContent(collection: collection);
-      },
-    );
-  }
-}
-
-class PlaylistPage extends StatelessWidget {
-  final int playlistId;
-
-  const PlaylistPage({super.key, required this.playlistId});
-
-  @override
-  Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: DataService(baseUrl: 'https://corsproxy.io/?https://api.deezer.com').get('/playlist/$playlistId'),
-      builder: (context, snapshot) {
-        if (!snapshot.hasData) return const Center(child: CircularProgressIndicator());
-        final data = snapshot.data as Map<String, dynamic>;
-
-        final collection = MediaCollection(
-          id: playlistId,
-          title: data['title'] ?? '',
-          subtitle: data['creator']['name'] ?? '',
-          coverUrl: data['picture_xl'] ?? '',
-          type: 'playlist',
-        );
+        final collection = MediaCollection.fromJson(data, 'album');
 
         return CollectionContent(collection: collection);
       },

@@ -34,12 +34,13 @@ class _HomePageState extends State<HomePage> {
     final dataService = DataService(baseUrl: 'https://corsproxy.io/?https://api.deezer.com');
     final response = await dataService.get('/chart/0/tracks');
 
-    final tracks = (response['data'] as List<dynamic>).map<AudioTrack>((track) {
+    final tracks = (response['data'] as List).map((track) {
       return AudioTrack(
-        imageUrl: 'https://e-cdns-images.dzcdn.net/images/cover/${track['album']['md5_image']}/250x250-000000-80-0-0.jpg',
         title: track['title'] ?? '',
-        subtitle: track['artist']['name'] ?? '',
+        subtitle: track['artist']?['name'] ?? '',
+        imageUrl: 'https://e-cdns-images.dzcdn.net/images/cover/${track['album']?['md5_image']}/250x250-000000-80-0-0.jpg',
         audioPreviewUrl: track['preview'] ?? '',
+        albumId: track['album']?['id'] ?? 0,
       );
     }).toList();
 
@@ -120,6 +121,7 @@ class _HomePageState extends State<HomePage> {
                 'title': t.title,
                 'subtitle': t.subtitle,
                 'audioPreviewUrl': t.audioPreviewUrl,
+                'albumId': t.albumId.toString(),  // <-- toString qui
               })
                   .toList(),
               albums: albums
@@ -127,7 +129,7 @@ class _HomePageState extends State<HomePage> {
                 'imageUrl': album.coverUrl,
                 'title': album.title,
                 'subtitle': album.artist,
-                'albumId': album.id.toString(),
+                'albumId': album.id.toString(),  // <-- toString qui
               })
                   .toList(),
               playlists: playlists
@@ -135,7 +137,7 @@ class _HomePageState extends State<HomePage> {
                 'imageUrl': playlist.coverUrl,
                 'title': playlist.title,
                 'subtitle': playlist.subtitle,
-                'playlistId': playlist.id.toString(),
+                'playlistId': playlist.id.toString(),  // <-- toString qui
               })
                   .toList(),
               currentIndex: audioController.currentIndex,
@@ -143,6 +145,7 @@ class _HomePageState extends State<HomePage> {
               onAlbumTap: (albumId) => _goToAlbum(context, albumId),
               onPlaylistTap: (playlistId) => _goToPlaylist(context, playlistId),
             ),
+
           ),
           if (audioController.currentTrack != null)
             Container(

@@ -1,33 +1,34 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_project/core/widgets/lists/list_item.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_project/core/data/domain/controllers/audio_player_controller.dart';
 
+import '../../data/domain/controllers/audio_player_controller.dart';
 
 class TrackList extends StatelessWidget {
   final List<AudioTrack> tracks;
 
-  const TrackList({Key? key, required this.tracks}) : super(key: key);
+  const TrackList({super.key, required this.tracks});
 
   @override
   Widget build(BuildContext context) {
-    final audioController = context.watch<AudioPlayerController>();
-    final currentIndex = audioController.currentIndex;
+    if (tracks.isEmpty) {
+      return const Center(child: Text('Nessuna traccia disponibile', style: TextStyle(color: Colors.white)));
+    }
 
-    return ListView.separated(
+    return ListView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       itemCount: tracks.length,
-      separatorBuilder: (_, __) => const Divider(color: Colors.grey, height: 1),
       itemBuilder: (context, index) {
         final track = tracks[index];
-        final isSelected = index == currentIndex;
+        final isPlaying = context.watch<AudioPlayerController>().currentIndex == index;
 
-        return TrackListItem(
-          index: index,
-          track: track,
-          isSelected: isSelected,
+        return ListTile(
+          leading: track.imageUrl.isNotEmpty
+              ? Image.network(track.imageUrl, width: 50, height: 50, fit: BoxFit.cover)
+              : const SizedBox(width: 50, height: 50),
+          title: Text(track.title, style: TextStyle(color: isPlaying ? Colors.green : Colors.white)),
+          subtitle: Text(track.subtitle, style: const TextStyle(color: Colors.grey)),
+          trailing: isPlaying ? const Icon(Icons.equalizer, color: Colors.green) : const Icon(Icons.play_arrow, color: Colors.white),
           onTap: () {
             context.read<AudioPlayerController>().playTrack(index);
           },

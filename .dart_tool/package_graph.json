@@ -8,7 +8,9 @@
       "version": "1.0.0+1",
       "dependencies": [
         "audio_session",
+        "charts_flutter",
         "cupertino_icons",
+        "fl_chart",
         "flutter",
         "http",
         "just_audio",
@@ -22,7 +24,7 @@
     },
     {
       "name": "flutter_lints",
-      "version": "5.0.0",
+      "version": "6.0.0",
       "dependencies": [
         "lints"
       ]
@@ -83,13 +85,43 @@
       ]
     },
     {
+      "name": "charts_flutter",
+      "version": "0.12.0",
+      "dependencies": [
+        "charts_common",
+        "collection",
+        "flutter",
+        "intl",
+        "logging",
+        "meta"
+      ]
+    },
+    {
+      "name": "fl_chart",
+      "version": "1.0.0",
+      "dependencies": [
+        "equatable",
+        "flutter",
+        "vector_math"
+      ]
+    },
+    {
       "name": "rxdart",
-      "version": "0.27.7",
+      "version": "0.28.0",
       "dependencies": []
     },
     {
+      "name": "provider",
+      "version": "6.1.5",
+      "dependencies": [
+        "collection",
+        "flutter",
+        "nested"
+      ]
+    },
+    {
       "name": "audio_session",
-      "version": "0.1.25",
+      "version": "0.2.2",
       "dependencies": [
         "flutter",
         "flutter_web_plugins",
@@ -99,7 +131,7 @@
     },
     {
       "name": "just_audio",
-      "version": "0.9.46",
+      "version": "0.10.4",
       "dependencies": [
         "async",
         "audio_session",
@@ -111,12 +143,13 @@
         "path",
         "path_provider",
         "rxdart",
+        "synchronized",
         "uuid"
       ]
     },
     {
       "name": "lints",
-      "version": "5.1.1",
+      "version": "6.0.0",
       "dependencies": []
     },
     {
@@ -298,6 +331,32 @@
       "dependencies": []
     },
     {
+      "name": "charts_common",
+      "version": "0.12.0",
+      "dependencies": [
+        "collection",
+        "intl",
+        "logging",
+        "meta",
+        "vector_math"
+      ]
+    },
+    {
+      "name": "equatable",
+      "version": "2.0.7",
+      "dependencies": [
+        "collection",
+        "meta"
+      ]
+    },
+    {
+      "name": "nested",
+      "version": "1.0.0",
+      "dependencies": [
+        "flutter"
+      ]
+    },
+    {
       "name": "flutter_web_plugins",
       "version": "0.0.0",
       "dependencies": [
@@ -308,6 +367,11 @@
         "meta",
         "vector_math"
       ]
+    },
+    {
+      "name": "synchronized",
+      "version": "3.4.0",
+      "dependencies": []
     },
     {
       "name": "crypto",
@@ -421,11 +485,6 @@
       ]
     },
     {
-      "name": "synchronized",
-      "version": "3.4.0",
-      "dependencies": []
-    },
-    {
       "name": "plugin_platform_interface",
       "version": "2.1.8",
       "dependencies": [
@@ -451,19 +510,16 @@
       ]
     },
     {
-      "name": "provider",
-      "version": "6.1.5",
-      "dependencies": [
-        "collection",
-        "flutter",
-        "nested"
-      ]
+      "name": "logging",
+      "version": "1.3.0",
+      "dependencies": []
     },
     {
-      "name": "nested",
-      "version": "1.0.0",
+      "name": "intl",
+      "version": "0.17.0",
       "dependencies": [
-        "flutter"
+        "clock",
+        "path"
       ]
     }
   ],

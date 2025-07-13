@@ -19,6 +19,7 @@ class PlayerControls extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
+
       children: [
         IconButton(onPressed: onPrevious, icon: Icon(Icons.skip_previous, color: Colors.white)),
         IconButton(

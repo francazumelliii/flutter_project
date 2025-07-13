@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_project/core/data/domain/models/media_collection.dart';
 import 'package:flutter_project/core/widgets/albums/collection_header.dart';
@@ -27,18 +29,24 @@ class _CollectionContentState extends State<CollectionContent> {
 
   Future<void> _loadTracks() async {
     final dataService = DataService(baseUrl: 'https://corsproxy.io/?https://api.deezer.com');
+
     final endpoint = widget.collection.type == 'album'
         ? '/album/${widget.collection.id}/tracks'
         : '/playlist/${widget.collection.id}/tracks';
 
     final response = await dataService.get(endpoint);
-    final loadedTracks = (response['data'] as List<dynamic>).map<AudioTrack>((track) {
-      return AudioTrack(
-        imageUrl: widget.collection.coverUrl,
-        title: track['title'] ?? '',
-        subtitle: widget.collection.subtitle,
-        audioPreviewUrl: track['preview'] ?? '',
-      );
+    print('Response: $response');  // <<-- debug qui
+
+    if (response == null || response['data'] == null) {
+      print('Nessuna traccia trovata.');
+      return;
+    }
+
+    final List<dynamic> dataList = response['data'];
+
+    final List<AudioTrack> loadedTracks = dataList.map((item) {
+      print('Track item: $item');  // <<-- debug singolo elemento
+      return AudioTrack.fromJson(item);
     }).toList();
 
     setState(() => tracks = loadedTracks);

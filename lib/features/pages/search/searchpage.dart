@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_project/core/data/services/data_service.dart';
-import 'package:flutter_project/core/data/domain/models/media_collection.dart';
-import 'package:flutter_project/core/data/domain/controllers/audio_player_controller.dart';
-import 'package:flutter_project/core/widgets/lists/track_list.dart';
-import 'package:flutter_project/core/widgets/audio_player/global_audio_player.dart';
-import 'package:flutter_project/features/pages/albums/collection_content.dart';
-import 'package:flutter_project/features/pages/artists/artistpage.dart';
 import 'package:provider/provider.dart';
+
+import 'package:flutter_project/core/data/domain/controllers/audio_player_controller.dart';
+
+import 'package:flutter_project/core/data/services/data_service.dart';
+
+import '../../../core/widgets/lists/list_item.dart';
+import '../albums/albumpage.dart';
 
 class SearchPage extends StatefulWidget {
   const SearchPage({super.key});
@@ -16,210 +16,107 @@ class SearchPage extends StatefulWidget {
 }
 
 class _SearchPageState extends State<SearchPage> {
-  String query = '';
-  String searchType = 'track'; // 'track', 'album', 'playlist', 'artist'
-  List<dynamic> results = [];
-  bool isLoading = false;
+  final TextEditingController _searchController = TextEditingController();
+  final DataService dataService = DataService(baseUrl: 'https://corsproxy.io/?https://api.deezer.com');
 
-  void _search() async {
+  List<AudioTrack> _tracks = [];
+  bool _isLoading = false;
+
+  Future<void> _searchTracks(String query) async {
     if (query.isEmpty) {
       setState(() {
-        results = [];
+        _tracks = [];
       });
       return;
     }
 
-    setState(() => isLoading = true);
-
-    final dataService = DataService(baseUrl: 'https://corsproxy.io/?https://api.deezer.com');
-    final response = await dataService.get('/search/$searchType?q=$query');
-
     setState(() {
-      results = response['data'] ?? [];
-      isLoading = false;
+      _isLoading = true;
     });
-  }
 
-  void _onResultTap(Map<String, dynamic> item) {
-    final type = item['type'];
-    final id = int.tryParse(item['id'].toString()) ?? 0;
+    try {
 
-    final audioController = context.read<AudioPlayerController>();
+      final jsonData = await dataService.get('/search?q=$query');
 
-    if (type == 'track') {
-      // Riproduci traccia singola
-      audioController.setTracks([
-        AudioTrack(
-          imageUrl: item['album']?['cover_xl'] ?? '',
-          title: item['title'] ?? '',
-          subtitle: item['artist']?['name'] ?? '',
-          audioPreviewUrl: item['preview'] ?? '',
-        )
-      ]);
-      audioController.playTrack(0);
-    } else if (type == 'album' || type == 'playlist') {
-      final collection = MediaCollection(
-        id: id,
-        title: item['title'] ?? '',
-        subtitle: (type == 'album')
-            ? (item['artist']?['name'] ?? '')
-            : (item['creator']?['name'] ?? ''),
-        coverUrl: (type == 'album') ? item['cover_xl'] ?? '' : item['picture_xl'] ?? '',
-        type: type,
-      );
+      final List<AudioTrack> loadedTracks = (jsonData['data'] as List)
+          .map((item) => AudioTrack.fromJson(item))
+          .toList();
 
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (_) => CollectionContent(collection: collection),
-        ),
-      );
-    } else if (type == 'artist') {
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (_) => ArtistPage(artistId: id),
-        ),
-      );
+      setState(() {
+        _tracks = loadedTracks;
+      });
+    } catch (e) {
+      setState(() {
+        _tracks = [];
+      });
+      // Qui puoi gestire meglio l'errore, es. showSnackbar
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 
   @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final audioController = context.watch<AudioPlayerController>();
+    final currentIndex = audioController.currentIndex;
+
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
         title: TextField(
+          controller: _searchController,
+          autofocus: true,
           style: const TextStyle(color: Colors.white),
           decoration: const InputDecoration(
-            hintText: 'Search Deezer',
+            hintText: 'Search tracks...',
             hintStyle: TextStyle(color: Colors.white54),
             border: InputBorder.none,
+            prefixIcon: Icon(Icons.search, color: Colors.white),
           ),
-          onChanged: (val) {
-            query = val;
-          },
-          onSubmitted: (val) {
-            query = val;
-            _search();
-          },
+          onSubmitted: _searchTracks,
+          textInputAction: TextInputAction.search,
         ),
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(40),
-          child: _SearchTypeSelector(
-            selectedType: searchType,
-            onTypeSelected: (type) {
-              setState(() {
-                searchType = type;
-                _search();
-              });
-            },
-          ),
-        ),
+        backgroundColor: Colors.black,
       ),
-      body: isLoading
+      body: _isLoading
           ? const Center(child: CircularProgressIndicator())
-          : results.isEmpty
-          ? const Center(child: Text('No results', style: TextStyle(color: Colors.white)))
+          : _tracks.isEmpty
+          ? const Center(child: Text('No results', style: TextStyle(color: Colors.white54)))
           : ListView.separated(
-        padding: const EdgeInsets.all(12),
-        itemCount: results.length,
-        separatorBuilder: (_, __) => const Divider(color: Colors.white24),
+        padding: const EdgeInsets.all(16),
+        itemCount: _tracks.length,
+        separatorBuilder: (_, __) => const Divider(color: Colors.grey),
         itemBuilder: (context, index) {
-          final item = results[index];
-          return _SearchResultTile(
-            item: item,
-            onTap: () => _onResultTap(item),
+          final track = _tracks[index];
+          final isSelected = index == currentIndex;
+
+          return TrackListItem(
+            index: index,
+            track: track,
+            isSelected: isSelected,
+            onTap: () {
+              context.read<AudioPlayerController>().setTracks(_tracks);
+              context.read<AudioPlayerController>().playTrack(index);
+            },
+            onAlbumTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => AlbumPage(albumId: track.albumId),
+                ),
+              );
+            },
           );
         },
       ),
-      bottomNavigationBar: const GlobalAudioPlayer(),
-    );
-  }
-}
-
-class _SearchTypeSelector extends StatelessWidget {
-  final String selectedType;
-  final void Function(String) onTypeSelected;
-
-  const _SearchTypeSelector({
-    required this.selectedType,
-    required this.onTypeSelected,
-  });
-
-  static const Map<String, String> types = {
-    'track': 'Tracks',
-    'album': 'Albums',
-    'playlist': 'Playlists',
-    'artist': 'Artists',
-  };
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      height: 40,
-      child: ListView(
-        scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: 12),
-        children: types.entries.map((entry) {
-          final selected = entry.key == selectedType;
-          return GestureDetector(
-            onTap: () => onTypeSelected(entry.key),
-            child: Container(
-              margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              decoration: BoxDecoration(
-                color: selected ? const Color(0xFF1DB954) : Colors.white12,
-                borderRadius: BorderRadius.circular(20),
-              ),
-              alignment: Alignment.center,
-              child: Text(
-                entry.value,
-                style: TextStyle(color: selected ? Colors.black : Colors.white),
-              ),
-            ),
-          );
-        }).toList(),
-      ),
-    );
-  }
-}
-
-class _SearchResultTile extends StatelessWidget {
-  final Map<String, dynamic> item;
-  final VoidCallback onTap;
-
-  const _SearchResultTile({
-    required this.item,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final type = item['type'] ?? 'unknown';
-    final title = item['title'] ?? '';
-    final subtitle = (type == 'album' || type == 'playlist')
-        ? (type == 'album'
-        ? (item['artist']?['name'] ?? '')
-        : (item['creator']?['name'] ?? ''))
-        : (item['artist']?['name'] ?? '');
-
-    final imageUrl = (type == 'album')
-        ? (item['cover_small'] ?? '')
-        : (type == 'playlist')
-        ? (item['picture_small'] ?? '')
-        : (item['artist']?['picture_small'] ?? '');
-
-    return ListTile(
-      onTap: onTap,
-      leading: imageUrl.isNotEmpty
-          ? ClipRRect(
-        borderRadius: BorderRadius.circular(6),
-        child: Image.network(imageUrl, width: 50, height: 50, fit: BoxFit.cover),
-      )
-          : null,
-      title: Text(title, style: const TextStyle(color: Colors.white)),
-      subtitle: Text(subtitle, style: const TextStyle(color: Colors.white70)),
-      trailing: Text(type.toUpperCase(), style: const TextStyle(color: Colors.white54, fontSize: 12)),
     );
   }
 }

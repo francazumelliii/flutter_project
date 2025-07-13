@@ -1,12 +1,15 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_project/core/data/domain/controllers/audio_player_controller.dart';
-import 'package:flutter_project/core/widgets/icons/play_icon.dart';
+
+import '../../data/domain/controllers/audio_player_controller.dart';
+import '../icons/play_icon.dart';
 
 class TrackListItem extends StatelessWidget {
   final int index;
   final AudioTrack track;
   final bool isSelected;
   final VoidCallback onTap;
+  final VoidCallback onAlbumTap;
 
   const TrackListItem({
     Key? key,
@@ -14,6 +17,7 @@ class TrackListItem extends StatelessWidget {
     required this.track,
     required this.isSelected,
     required this.onTap,
+    required this.onAlbumTap,
   }) : super(key: key);
 
   @override
@@ -37,13 +41,19 @@ class TrackListItem extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 12),
-            ClipRRect(
-              borderRadius: BorderRadius.circular(4),
-              child: Image.network(
-                track.imageUrl,
-                width: 50,
-                height: 50,
-                fit: BoxFit.cover,
+            GestureDetector(
+              onTap: () {
+                // impedisce al tap sulla cover di attivare anche onTap della riga
+                onAlbumTap();
+              },
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(4),
+                child: Image.network(
+                  track.imageUrl,
+                  width: 50,
+                  height: 50,
+                  fit: BoxFit.cover,
+                ),
               ),
             ),
             const SizedBox(width: 12),
