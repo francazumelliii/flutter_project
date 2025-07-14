@@ -53,7 +53,6 @@ class _BaseTabState extends State<BaseTab> {
       tabBuilder: (context, index) {
         switch (index) {
           case 0:
-          // Qui usa CupertinoTabView per creare un Navigator dedicato alla tab Home
             return CupertinoTabView(
               builder: (context) => const HomePage(),
             );

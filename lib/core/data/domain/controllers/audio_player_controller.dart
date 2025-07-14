@@ -33,7 +33,6 @@ class AudioPlayerController with ChangeNotifier {
     if (index < 0 || index >= _tracks.length) return;
 
     final url = _tracks[index].audioPreviewUrl;
-    print('PlayTrack called: index=$index, url=$url');
 
     if (url.isEmpty) {
       print('URL is empty, cannot play.');

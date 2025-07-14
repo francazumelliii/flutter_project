@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
+import 'package:flutter_project/core/data/domain/models/chart_data.dart';
 
 import '../../../core/data/domain/controllers/audio_player_controller.dart';
 import '../../data/domain/models/audio_track.dart';
@@ -10,10 +11,10 @@ class BarChartWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final data = tracks.map((track) => _ChartData(track.title, track.albumId)).toList();
+    final data = tracks.map((track) => ChartData(track.title, track.albumId)).toList();
 
     final series = [
-      charts.Series<_ChartData, String>(
+      charts.Series<ChartData, String>(
         id: 'Popularity',
         domainFn: (data, _) => data.title,
         measureFn: (data, _) => data.value,
@@ -38,8 +39,3 @@ class BarChartWidget extends StatelessWidget {
   }
 }
 
-class _ChartData {
-  final String title;
-  final int value;
-  _ChartData(this.title, this.value);
-}
