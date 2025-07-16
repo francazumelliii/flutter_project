@@ -10,8 +10,9 @@ class PlaylistDetailsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final dataService = DataService();
     return FutureBuilder(
-      future: DataService(baseUrl: 'https://corsproxy.io/?https://api.deezer.com').get('/playlist/$playlistId'),
+      future: dataService.get('/playlist/$playlistId'),
       builder: (context, snapshot) {
         if (!snapshot.hasData) return const Center(child: CircularProgressIndicator());
         final data = snapshot.data as Map<String, dynamic>;

@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'package:flutter_project/core/data/domain/controllers/audio_player_controller.dart';
-
-import 'package:flutter_project/core/data/services/data_service.dart';
-
 import '../../../core/data/domain/models/audio_track.dart';
-import '../../../core/widgets/lists/list_item.dart';
+import '../../../core/data/services/data_service.dart';
+import '../../../core/data/domain/controllers/audio_player_controller.dart';
+import '../../../core/utils/dimensions.dart';
+import '../../../core/widgets/lists/track_list/list_item.dart';
 import '../albums/albumpage.dart';
 
 class SearchPage extends StatefulWidget {
@@ -17,104 +16,90 @@ class SearchPage extends StatefulWidget {
 }
 
 class _SearchPageState extends State<SearchPage> {
-  final TextEditingController _searchController = TextEditingController();
-  final DataService dataService = DataService(baseUrl: 'https://corsproxy.io/?https://api.deezer.com');
+  final TextEditingController _controller = TextEditingController();
+  final DataService dataService = DataService();
 
-  List<AudioTrack> _tracks = [];
-  bool _isLoading = false;
+  List<AudioTrack> tracks = [];
+  bool loading = false;
 
-  Future<void> _searchTracks(String query) async {
+  void search(String query) async {
     if (query.isEmpty) {
-      setState(() {
-        _tracks = [];
-      });
+      setState(() => tracks = []);
       return;
     }
 
-    setState(() {
-      _isLoading = true;
-    });
+    setState(() => loading = true);
 
     try {
-
-      final jsonData = await dataService.get('/search?q=$query');
-
-      final List<AudioTrack> loadedTracks = (jsonData['data'] as List)
-          .map((item) => AudioTrack.fromJson(item))
-          .toList();
-
-      setState(() {
-        _tracks = loadedTracks;
-      });
-    } catch (e) {
-      setState(() {
-        _tracks = [];
-      });
-      // Qui puoi gestire meglio l'errore, es. showSnackbar
-    } finally {
-      setState(() {
-        _isLoading = false;
-      });
+      final result = await dataService.get('/search?q=$query');
+      final list = result['data'] as List;
+      final loaded = list.map((e) => AudioTrack.fromJson(e)).toList();
+      setState(() => tracks = loaded);
+    } catch (_) {
+      setState(() => tracks = []);
     }
+
+    setState(() => loading = false);
   }
 
   @override
   void dispose() {
-    _searchController.dispose();
+    _controller.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final audioController = context.watch<AudioPlayerController>();
-    final currentIndex = audioController.currentIndex;
+    final audioCtrl = context.watch<AudioPlayerController>();
+    final current = audioCtrl.currentIndex;
 
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
+        backgroundColor: Colors.black,
         title: TextField(
-          controller: _searchController,
-          autofocus: true,
+          controller: _controller,
           style: const TextStyle(color: Colors.white),
           decoration: const InputDecoration(
+            prefixIcon: Icon(Icons.search, color: Colors.white),
             hintText: 'Search tracks...',
             hintStyle: TextStyle(color: Colors.white54),
             border: InputBorder.none,
-            prefixIcon: Icon(Icons.search, color: Colors.white),
           ),
-          onSubmitted: _searchTracks,
+          onSubmitted: search,
           textInputAction: TextInputAction.search,
         ),
-        backgroundColor: Colors.black,
       ),
-      body: _isLoading
+      body: loading
           ? const Center(child: CircularProgressIndicator())
-          : _tracks.isEmpty
+          : tracks.isEmpty
           ? const Center(child: Text('No results', style: TextStyle(color: Colors.white54)))
-          : ListView.separated(
-        padding: const EdgeInsets.all(16),
-        itemCount: _tracks.length,
-        separatorBuilder: (_, __) => const Divider(color: Colors.grey),
+          : ListView.builder(
+        padding: const EdgeInsets.all(Dimensions.paddingLarge),
+        itemCount: tracks.length,
         itemBuilder: (context, index) {
-          final track = _tracks[index];
-          final isSelected = index == currentIndex;
+          final track = tracks[index];
+          final isSelected = index == current;
 
-          return TrackListItem(
-            index: index,
-            track: track,
-            isSelected: isSelected,
-            onTap: () {
-              context.read<AudioPlayerController>().setTracks(_tracks);
-              context.read<AudioPlayerController>().playTrack(index);
-            },
-            onAlbumTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => AlbumPage(albumId: track.albumId),
-                ),
-              );
-            },
+          return Padding(
+            padding: EdgeInsets.only(
+              bottom: index == tracks.length - 1 ? 0 : Dimensions.spacingSmall,
+            ),
+            child: TrackListItem(
+              index: index,
+              track: track,
+              isSelected: isSelected,
+              onTap: () {
+                audioCtrl.setPlaylist(tracks);
+                audioCtrl.playTrack(index);
+              },
+              onAlbumTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => AlbumPage(albumId: track.albumId)),
+                );
+              },
+            ),
           );
         },
       ),

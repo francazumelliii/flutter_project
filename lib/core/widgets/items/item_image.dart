@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_project/core/utils/dimensions.dart';
 
 class ItemImage extends StatelessWidget {
   final String imageUrl;
@@ -11,8 +12,8 @@ class ItemImage extends StatelessWidget {
       borderRadius: BorderRadius.circular(3),
       child: Image.network(
         imageUrl,
-        width: 120,
-        height: 120,
+        width: Dimensions.coverImageWidth,
+        height: Dimensions.coverImageHeight,
         fit: BoxFit.cover,
         errorBuilder: (context, error, stackTrace) => const Icon(Icons.music_note, color: Colors.white),
       ),

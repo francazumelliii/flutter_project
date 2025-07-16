@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../utils/dimensions.dart';
 
 class PlayButton extends StatelessWidget {
   final VoidCallback onPressed;
@@ -13,6 +14,12 @@ class PlayButton extends StatelessWidget {
       label: const Text('Play Album'),
       style: ElevatedButton.styleFrom(
         backgroundColor: Colors.green,
+        foregroundColor: Colors.white,
+        padding: const EdgeInsets.symmetric(
+          horizontal: Dimensions.paddingLarge,
+          vertical: Dimensions.paddingVerticalMedium,
+        ),
+        textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
       ),
     );
   }

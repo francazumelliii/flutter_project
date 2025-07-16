@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_project/core/utils/text_styles.dart';
+import 'package:flutter_project/core/utils/text_styles.dart';
 
 class ItemInfo extends StatelessWidget {
   final String title;
@@ -17,13 +19,13 @@ class ItemInfo extends StatelessWidget {
       children: [
         Text(
           title,
-          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.white),
+          style: TextStyles.itemTitle,
           overflow: TextOverflow.ellipsis,
           maxLines: 1,
         ),
         Text(
           subtitle,
-          style: const TextStyle(fontSize: 12, color: Colors.grey),
+          style: TextStyles.itemSubtitle,
           overflow: TextOverflow.ellipsis,
           maxLines: 1,
         ),

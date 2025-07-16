@@ -1,32 +1,42 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:just_audio/just_audio.dart';
+
+import '../../data/domain/controllers/audio_player_controller.dart';
+import '../../utils/dimensions.dart';
 
 class PlayerControls extends StatelessWidget {
-  final bool isPlaying;
-  final VoidCallback onPlayPause;
-  final VoidCallback onNext;
-  final VoidCallback onPrevious;
+  const PlayerControls({super.key, required this.controller});
 
-  const PlayerControls({
-    super.key,
-    required this.isPlaying,
-    required this.onPlayPause,
-    required this.onNext,
-    required this.onPrevious,
-  });
+  final AudioPlayerController controller;
 
   @override
   Widget build(BuildContext context) {
+    final player = controller.audioPlayer;
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
-
       children: [
-        IconButton(onPressed: onPrevious, icon: Icon(Icons.skip_previous, color: Colors.white)),
         IconButton(
-          onPressed: onPlayPause,
-          icon: Icon(isPlaying ? Icons.pause_circle_filled : Icons.play_circle_filled, size: 48, color: Colors.white),
+          icon: const Icon(Icons.skip_previous),
+          onPressed: controller.previousTrack,
         ),
-        IconButton(onPressed: onNext, icon: Icon(Icons.skip_next, color: Colors.white)),
+        SizedBox(width: Dimensions.spacingMedium),
+        StreamBuilder<PlayerState>(
+          stream: player.playerStateStream,
+          builder: (context, snapshot) {
+            final isPlaying = snapshot.data?.playing ?? false;
+            return IconButton(
+              icon: Icon(isPlaying ? Icons.pause : Icons.play_arrow),
+              onPressed: isPlaying ? controller.pause : controller.resume,
+            );
+          },
+        ),
+        SizedBox(width: Dimensions.spacingMedium),
+        IconButton(
+          icon: const Icon(Icons.skip_next),
+          onPressed: controller.nextTrack,
+        ),
       ],
     );
   }

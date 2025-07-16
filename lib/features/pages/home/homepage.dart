@@ -7,6 +7,7 @@ import '../../../core/data/domain/models/audio_track.dart';
 import '../../../core/data/domain/models/album.dart';
 import '../../../core/data/domain/models/media_collection.dart';
 import '../../../core/data/services/data_service.dart';
+import '../../../core/utils/dimensions.dart';
 import '../../../core/widgets/audio_player/audio_player.dart';
 import '../albums/albumpage.dart';
 import '../playlists/playlistpage.dart';
@@ -22,47 +23,46 @@ class _HomePageState extends State<HomePage> {
   List<AudioTrack> tracks = [];
   List<Album> albums = [];
   List<MediaCollection> playlists = [];
-
   bool loading = true;
 
   @override
   void initState() {
     super.initState();
-    _loadAll();
+    loadData();
   }
 
-  Future<void> _loadAll() async {
-    final dataService = DataService(baseUrl: 'https://corsproxy.io/?https://api.deezer.com');
+  Future<void> loadData() async {
+    final dataService = DataService();
 
-    final tracksResponse = await dataService.get('/chart/0/tracks');
-    final albumsResponse = await dataService.get('/chart/0/albums');
-    final playlistsResponse = await dataService.get('/chart/0/playlists');
+    final tracksData = await dataService.get('/chart/0/tracks');
+    final albumsData = await dataService.get('/chart/0/albums');
+    final playlistsData = await dataService.get('/chart/0/playlists');
 
-    final loadedTracks = (tracksResponse['data'] as List).map((track) {
+    final loadedTracks = (tracksData['data'] as List).map((t) {
       return AudioTrack(
-        title: track['title'] ?? '',
-        subtitle: track['artist']?['name'] ?? '',
-        imageUrl: 'https://e-cdns-images.dzcdn.net/images/cover/${track['album']?['md5_image']}/250x250-000000-80-0-0.jpg',
-        audioPreviewUrl: track['preview'] ?? '',
-        albumId: track['album']?['id'] ?? 0,
+        title: t['title'] ?? '',
+        subtitle: t['artist']?['name'] ?? '',
+        imageUrl: 'https://e-cdns-images.dzcdn.net/images/cover/${t['album']?['md5_image']}/250x250-000000-80-0-0.jpg',
+        audioPreviewUrl: t['preview'] ?? '',
+        albumId: t['album']?['id'] ?? 0,
       );
     }).toList();
 
-    final loadedAlbums = (albumsResponse['data'] as List).map((albumJson) {
+    final loadedAlbums = (albumsData['data'] as List).map((a) {
       return Album(
-        id: albumJson['id'],
-        title: albumJson['title'] ?? '',
-        artist: albumJson['artist']?['name'] ?? '',
-        coverUrl: albumJson['cover_xl'] ?? '',
+        id: a['id'],
+        title: a['title'] ?? '',
+        artist: a['artist']?['name'] ?? '',
+        coverUrl: a['cover_xl'] ?? '',
       );
     }).toList();
 
-    final loadedPlaylists = (playlistsResponse['data'] as List).map((playlistJson) {
+    final loadedPlaylists = (playlistsData['data'] as List).map((p) {
       return MediaCollection(
-        id: playlistJson['id'],
-        title: playlistJson['title'] ?? '',
-        subtitle: playlistJson['creator']?['name'] ?? '',
-        coverUrl: playlistJson['picture_xl'] ?? '',
+        id: p['id'],
+        title: p['title'] ?? '',
+        subtitle: p['creator']?['name'] ?? '',
+        coverUrl: p['picture_xl'] ?? '',
         type: 'playlist',
       );
     }).toList();
@@ -74,7 +74,8 @@ class _HomePageState extends State<HomePage> {
       loading = false;
     });
 
-    context.read<AudioPlayerController>().setTracks(loadedTracks);
+    // Set playlist for audio player
+    context.read<AudioPlayerController>().setPlaylist(loadedTracks);
   }
 
   void onTrackSelected(int index) {
@@ -82,11 +83,17 @@ class _HomePageState extends State<HomePage> {
   }
 
   void onAlbumTap(int albumId) {
-    Navigator.of(context).push(MaterialPageRoute(builder: (_) => AlbumPage(albumId: albumId)));
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => AlbumPage(albumId: albumId)),
+    );
   }
 
   void onPlaylistTap(int playlistId) {
-    Navigator.of(context).push(MaterialPageRoute(builder: (_) => PlaylistPage(playlistId: playlistId)));
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => PlaylistPage(playlistId: playlistId)),
+    );
   }
 
   @override
@@ -108,31 +115,25 @@ class _HomePageState extends State<HomePage> {
         children: [
           Expanded(
             child: HomeContent(
-              tracks: tracks
-                  .map((t) => {
+              tracks: tracks.map((t) => {
                 'imageUrl': t.imageUrl,
                 'title': t.title,
                 'subtitle': t.subtitle,
                 'audioPreviewUrl': t.audioPreviewUrl,
                 'albumId': t.albumId.toString(),
-              })
-                  .toList(),
-              albums: albums
-                  .map((a) => {
+              }).toList(),
+              albums: albums.map((a) => {
                 'imageUrl': a.coverUrl,
                 'title': a.title,
                 'subtitle': a.artist,
                 'albumId': a.id.toString(),
-              })
-                  .toList(),
-              playlists: playlists
-                  .map((p) => {
+              }).toList(),
+              playlists: playlists.map((p) => {
                 'imageUrl': p.coverUrl,
                 'title': p.title,
                 'subtitle': p.subtitle,
                 'playlistId': p.id.toString(),
-              })
-                  .toList(),
+              }).toList(),
               currentIndex: audioController.currentIndex,
               onTrackSelected: onTrackSelected,
               onAlbumTap: onAlbumTap,
@@ -142,7 +143,7 @@ class _HomePageState extends State<HomePage> {
           if (audioController.currentTrack != null)
             Container(
               color: Colors.black87,
-              padding: const EdgeInsets.symmetric(vertical: 8),
+              padding: const EdgeInsets.symmetric(vertical: Dimensions.paddingSmall),
               child: CustomAudioPlayer(controller: audioController),
             ),
         ],

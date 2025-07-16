@@ -1,8 +1,10 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_project/features/pages/analytics/analyticspage.dart';
+import 'package:flutter/material.dart';
+
 import 'package:flutter_project/features/pages/home/homepage.dart';
 import 'package:flutter_project/features/pages/search/searchpage.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter_project/features/pages/analytics/analyticspage.dart';
+
 class BaseTab extends StatefulWidget {
   const BaseTab({super.key});
 
@@ -11,64 +13,40 @@ class BaseTab extends StatefulWidget {
 }
 
 class _BaseTabState extends State<BaseTab> {
-  final CupertinoTabController _tabController = CupertinoTabController();
+  int currentIndex = 0;
 
-  final Map<String, int> _routeToIndex = {
-    '/': 0,
-    '/search': 1,
-    '/analytics': 2,
-  };
-
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final route = ModalRoute.of(context)?.settings.name ?? '/';
-      final index = _routeToIndex[route] ?? 0;
-      _tabController.index = index;
+  void onTabTapped(int index) {
+    setState(() {
+      currentIndex = index;
     });
   }
 
-  void _onTabChanged(int index) {
-    setState(() {
-      _tabController.index = index;
-    });
+  Widget getPage(int index) {
+    if (index == 0) return const HomePage();
+    if (index == 1) return const SearchPage();
+    if (index == 2) return const AnalyticsPage();
+    return const Center(child: Text('Pagina non trovata', style: TextStyle(color: Colors.white)));
   }
 
   @override
   Widget build(BuildContext context) {
     return CupertinoTabScaffold(
-      controller: _tabController,
       tabBar: CupertinoTabBar(
         backgroundColor: Colors.black,
         activeColor: const Color(0xFF1DB954),
         inactiveColor: Colors.white70,
         items: const [
           BottomNavigationBarItem(icon: Icon(CupertinoIcons.home), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(CupertinoIcons.search), label: 'Search'),
+          BottomNavigationBarItem(icon: Icon(CupertinoIcons.search), label: 'Cerca'),
           BottomNavigationBarItem(icon: Icon(CupertinoIcons.chart_bar), label: 'Analytics'),
         ],
-        onTap: _onTabChanged,
+        onTap: onTabTapped,
+        currentIndex: currentIndex,
       ),
       tabBuilder: (context, index) {
-        switch (index) {
-          case 0:
-            return CupertinoTabView(
-              builder: (context) => const HomePage(),
-            );
-          case 1:
-            return CupertinoTabView(
-              builder: (context) => const SearchPage(),
-            );
-          case 2:
-            return CupertinoTabView(
-              builder: (context) => const AnalyticsPage(),
-            );
-          default:
-            return const Center(
-              child: Text('Unknown Tab', style: TextStyle(color: Colors.white)),
-            );
-        }
+        return CupertinoTabView(
+          builder: (context) => getPage(index),
+        );
       },
     );
   }

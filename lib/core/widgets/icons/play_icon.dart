@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../utils/dimensions.dart';
 
 class PlayIconButton extends StatelessWidget {
   final bool isPlaying;
@@ -16,10 +17,10 @@ class PlayIconButton extends StatelessWidget {
       icon: Icon(
         isPlaying ? Icons.pause_circle_filled : Icons.play_circle_fill,
         color: Colors.greenAccent,
-        size: 32,
+        size: Dimensions.iconSizeLarge,
       ),
       onPressed: onPressed,
-      splashRadius: 24,
+      splashRadius: Dimensions.splashRadius,
     );
   }
 }

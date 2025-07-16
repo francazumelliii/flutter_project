@@ -10,20 +10,21 @@ class AlbumPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final dataService = DataService();
     return FutureBuilder<dynamic>(
-      future: DataService(baseUrl: 'https://corsproxy.io/?https://api.deezer.com').get('/album/$albumId'),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState != ConnectionState.done) {
+      future: dataService.get('/album/$albumId'),
+      builder: (c, state) {
+        if (state.connectionState != ConnectionState.done) {
           return const Center(child: CircularProgressIndicator());
         }
-        if (snapshot.hasError) {
-          return Center(child: Text('Errore: ${snapshot.error}'));
+        if (state.hasError) {
+          return Center(child: Text('Errore: ${state.error}'));
         }
-        if (!snapshot.hasData || snapshot.data == null) {
+        if (!state.hasData || state.data == null) {
           return const Center(child: Text('Nessun dato trovato'));
         }
 
-        final data = snapshot.data as Map<String, dynamic>;
+        final data = state.data as Map<String, dynamic>;
         final collection = MediaCollection.fromJson(data, 'album');
 
         return CollectionContent(collection: collection);

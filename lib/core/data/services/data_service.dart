@@ -1,49 +1,47 @@
-
-
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class DataService {
-  final String baseUrl;
-
-  DataService({required this.baseUrl});
+  // Base URL Deezer + proxy CORS già inclusi
+  static const String _baseUrl = 'https://corsproxy.io/?https://api.deezer.com';
 
   Future<dynamic> get(String endpoint, {Map<String, String>? headers}) async {
-    final response = await http.get(Uri.parse('$baseUrl$endpoint'), headers: headers);
-    return _handleResponse(response);
+    final response = await http.get(_uri(endpoint), headers: headers);
+    return _parse(response);
   }
 
   Future<dynamic> post(String endpoint, {Map<String, String>? headers, dynamic body}) async {
     final response = await http.post(
-      Uri.parse('$baseUrl$endpoint'),
+      _uri(endpoint),
       headers: headers ?? {'Content-Type': 'application/json'},
-      body: jsonEncode(body),
+      body: body == null ? null : jsonEncode(body),
     );
-    return _handleResponse(response);
+    return _parse(response);
   }
 
   Future<dynamic> put(String endpoint, {Map<String, String>? headers, dynamic body}) async {
     final response = await http.put(
-      Uri.parse('$baseUrl$endpoint'),
+      _uri(endpoint),
       headers: headers ?? {'Content-Type': 'application/json'},
-      body: jsonEncode(body),
+      body: body == null ? null : jsonEncode(body),
     );
-    return _handleResponse(response);
+    return _parse(response);
   }
 
   Future<dynamic> delete(String endpoint, {Map<String, String>? headers}) async {
-    final response = await http.delete(Uri.parse('$baseUrl$endpoint'), headers: headers);
-    return _handleResponse(response);
+    final response = await http.delete(_uri(endpoint), headers: headers);
+    return _parse(response);
   }
 
-  dynamic _handleResponse(http.Response response) {
+  Uri _uri(String endpoint) {
+    return Uri.parse('$_baseUrl$endpoint');
+  }
+
+  dynamic _parse(http.Response response) {
     if (response.statusCode >= 200 && response.statusCode < 300) {
-      if (response.body.isNotEmpty) {
-        return jsonDecode(response.body);
-      }
-      return null;
-    } else {
-      throw Exception('Errore ${response.statusCode}: ${response.reasonPhrase}');
+      if (response.body.isEmpty) return null;
+      return jsonDecode(response.body);
     }
+    throw Exception('Errore ${response.statusCode}: ${response.reasonPhrase}');
   }
 }

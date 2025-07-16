@@ -1,48 +1,46 @@
-import 'package:flutter/cupertino.dart';
-import 'package:flutter_project/core/widgets/lists/gradient_overlay_right.dart';
-
+import 'package:flutter/material.dart';
 import '../items/item_tile.dart';
+import '../../utils/dimensions.dart';
 
 class ScrollableItemList extends StatelessWidget {
-  final List<Map<String, String>> items;
-  final int currentIndex;
-  final void Function(int index)? onTap;
-  final double horizontalPadding;
-
   const ScrollableItemList({
+    super.key,
     required this.items,
     required this.currentIndex,
     this.onTap,
-    required this.horizontalPadding,
+    this.horizontalPadding = Dimensions.paddingMedium,
   });
+
+  final List<Map<String, String>> items;
+  final int currentIndex;
+  final void Function(int)? onTap;
+  final double horizontalPadding;
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        ListView.separated(
-          scrollDirection: Axis.horizontal,
-          itemCount: items.length,
-          padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
-          separatorBuilder: (_, __) => const SizedBox(width: 12),
-          itemBuilder: (context, index) {
-            final item = items[index];
-            final isSelected = index == currentIndex;
-
-            return ItemTile(
-              imageUrl: item['imageUrl']!,
-              title: item['title']!,
-              subtitle: item['subtitle']!,
+    return SizedBox(
+      height: 180,
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
+        itemCount: items.length,
+        itemBuilder: (context, index) {
+          final item = items[index];
+          return Padding(
+            padding: EdgeInsets.only(
+              right: index == items.length - 1 ? 0 : Dimensions.spacingSmall,
+            ),
+            child: ItemTile(
+              imageUrl: item['imageUrl'] ?? '',
+              title: item['title'] ?? '',
+              subtitle: item['subtitle'] ?? '',
+              isSelected: index == currentIndex,
               audioPreviewUrl: item['audioPreviewUrl'] ?? '',
-              isSelected: isSelected,
               onTap: () => onTap?.call(index),
-            );
-          },
-        ),
-        const GradientOverlayRight(),
-      ],
+            ),
+          );
+        },
+      ),
     );
   }
 }
-
-

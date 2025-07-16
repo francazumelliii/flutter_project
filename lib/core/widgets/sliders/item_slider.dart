@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../lists/scrollable_item_list.dart';
 import '../titles/section_title.dart';
+import '../../utils/dimensions.dart';
 
 class ItemSlider extends StatelessWidget {
   final String title;
@@ -18,15 +19,12 @@ class ItemSlider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const horizontalPadding = 16.0;
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if (title.isNotEmpty)
           SectionTitle(
             text: title,
-            padding: EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: 12),
           ),
         SizedBox(
           height: 200,
@@ -34,7 +32,7 @@ class ItemSlider extends StatelessWidget {
             items: items,
             currentIndex: currentIndex,
             onTap: onTap,
-            horizontalPadding: horizontalPadding,
+            horizontalPadding: Dimensions.paddingMedium,
           ),
         ),
       ],

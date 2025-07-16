@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../utils/dimensions.dart';
 import 'item_image.dart';
 import 'item_info.dart';
 
@@ -27,10 +28,11 @@ class ItemTile extends StatelessWidget {
       color: Colors.transparent,
       child: InkWell(
         onTap: onTap,
+        borderRadius: BorderRadius.circular(Dimensions.borderRadiusMedium),
         child: Container(
           width: 140,
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(Dimensions.borderRadiusMedium),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -51,7 +53,7 @@ class ItemTile extends StatelessWidget {
                     ),
                 ],
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: Dimensions.spacingSmall),
               ItemInfo(title: title, subtitle: subtitle),
             ],
           ),
