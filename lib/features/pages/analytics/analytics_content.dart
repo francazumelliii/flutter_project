@@ -22,23 +22,97 @@ class AnalyticsContent extends StatelessWidget {
     final isMobile = MediaQuery.of(context).size.width < 600;
 
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            SectionTitle(text: 'Top Tracks Bar Chart'),
-            SizedBox(height: isMobile ? 200 : 150, child: TopTracksBarChart(tracks: topTracks)),
-            Dimensions.verticalExtraLarge,
+      backgroundColor: Colors.black,
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          if (isMobile) {
+            // scroll layout
+            return SingleChildScrollView(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  SectionTitle(text: 'Top Tracks Bar Chart'),
+                  SizedBox(
+                    height: 200,
+                    child: TopTracksBarChart(tracks: topTracks),
+                  ),
+                  Dimensions.verticalExtraLarge,
 
-            SectionTitle(text: 'Track Play Count Line Chart'),
-            SizedBox(height: isMobile ? 200 : 150, child: TrackPlayCountLineChart(tracks: topTracks, playCounts: playCounts)),
-            Dimensions.verticalExtraLarge,
+                  SectionTitle(text: 'Track Play Count Line Chart'),
+                  SizedBox(
+                    height: 200,
+                    child: TrackPlayCountLineChart(
+                      tracks: topTracks,
+                      playCounts: playCounts,
+                    ),
+                  ),
+                  Dimensions.verticalExtraLarge,
 
-            SectionTitle(text: 'Track Play Pie Chart'),
-            SizedBox(height: isMobile ? 220 : 180, child: TrackPlayPieChart(tracks: topTracks, playCounts: playCounts)),
-          ],
-        ),
+                  SectionTitle(text: 'Track Play Pie Chart'),
+                  SizedBox(
+                    height: 220,
+                    child: TrackPlayPieChart(
+                      tracks: topTracks,
+                      playCounts: playCounts,
+                    ),
+                  ),
+                ],
+              ),
+            );
+          } else {
+            // desktop layout
+            return Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SectionTitle(text: 'Top Tracks Bar Chart'),
+                            SizedBox(
+                              height: 150,
+                              child: TopTracksBarChart(tracks: topTracks),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SectionTitle(text: 'Track Play Count Line Chart'),
+                            SizedBox(
+                              height: 150,
+                              child: TrackPlayCountLineChart(
+                                tracks: topTracks,
+                                playCounts: playCounts,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  Dimensions.verticalExtraLarge,
+                  SectionTitle(text: 'Track Play Pie Chart'),
+                  SizedBox(
+                    height: 180,
+                    child: TrackPlayPieChart(
+                      tracks: topTracks,
+                      playCounts: playCounts,
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }
+        },
       ),
     );
   }
