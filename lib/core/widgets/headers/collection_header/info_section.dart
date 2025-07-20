@@ -1,9 +1,9 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_project/core/widgets/buttons/collection_play_button.dart';
 import 'package:flutter_project/core/widgets/titles/collection_subtitle.dart';
 import 'package:flutter_project/core/widgets/titles/collection_title.dart';
 
-import '../../buttons/play_button.dart';
+import '../../inputs/collection_play_button.dart';
+
 
 class InfoSection extends StatelessWidget {
   const InfoSection({
