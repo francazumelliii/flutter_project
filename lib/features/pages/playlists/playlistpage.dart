@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_project/core/data/domain/models/media_collection.dart';
 import 'package:flutter_project/core/data/services/data_service.dart';
 import 'package:flutter_project/features/pages/albums/collection_content.dart';
-import 'package:flutter_project/features/pages/playlists/playlist_details.dart';
 
 class PlaylistPage extends StatelessWidget {
   final int playlistId;

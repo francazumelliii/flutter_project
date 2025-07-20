@@ -1,7 +1,6 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 
-import '../../data/domain/controllers/audio_player_controller.dart';
 import '../../data/domain/models/audio_track.dart';
 
 class TopTracksBarChart extends StatelessWidget {

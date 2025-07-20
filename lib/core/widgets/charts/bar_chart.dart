@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:flutter_project/core/data/domain/models/chart_data.dart';
 
-import '../../../core/data/domain/controllers/audio_player_controller.dart';
 import '../../data/domain/models/audio_track.dart';
 
 class BarChartWidget extends StatelessWidget {
@@ -18,7 +17,7 @@ class BarChartWidget extends StatelessWidget {
         id: 'Popularity',
         domainFn: (data, _) => data.title,
         measureFn: (data, _) => data.value,
-        colorFn: (_, __) => charts.MaterialPalette.green.shadeDefault,
+        colorFn: (_, _) => charts.MaterialPalette.green.shadeDefault,
         data: data,
       )
     ];

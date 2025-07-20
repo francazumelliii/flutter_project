@@ -74,7 +74,6 @@ class _HomePageState extends State<HomePage> {
       loading = false;
     });
 
-    // Set playlist for audio player
     context.read<AudioPlayerController>().setPlaylist(loadedTracks);
   }
 
