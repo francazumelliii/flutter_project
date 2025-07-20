@@ -29,7 +29,6 @@ class _SearchPageState extends State<SearchPage> {
     'Hip Hop',
   ];
 
-  // Mappa dei generi Deezer e i loro ID ufficiali
   final Map<String, int> genreMap = {
     'Pop': 132,
     'Rock': 152,
@@ -50,10 +49,8 @@ class _SearchPageState extends State<SearchPage> {
       dynamic result;
 
       if (query.isNotEmpty) {
-        // Se c'è una query, faccio sempre ricerca generica (ignoro il genere)
         result = await dataService.get('/search?q=${Uri.encodeComponent(query)}');
       } else {
-        // Query vuota, uso filtro genere o top globali
         if (selectedCategory == 'All') {
           result = await dataService.get('/chart/0/tracks');
         } else {

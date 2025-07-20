@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../utils/dimensions.dart';
+
 class SearchBarWidget extends StatelessWidget {
   final TextEditingController controller;
   final Function(String) onSearch;
@@ -13,7 +15,7 @@ class SearchBarWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal:Dimensions.paddingMedium, vertical: Dimensions.paddingSmall),
       color: Colors.black,
       child: TextField(
         controller: controller,

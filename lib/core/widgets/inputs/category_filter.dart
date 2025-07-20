@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../utils/dimensions.dart';
+
 class CategoryFilter extends StatelessWidget {
   final List<String> categories;
   final String selectedCategory;
@@ -15,14 +17,14 @@ class CategoryFilter extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+      padding: const EdgeInsets.symmetric(vertical: Dimensions.paddingSmall, horizontal: Dimensions.paddingMedium),
       color: Colors.black,
       child: SizedBox(
         height: 40,
         child: ListView.separated(
           scrollDirection: Axis.horizontal,
           itemCount: categories.length,
-          separatorBuilder: (_, __) => const SizedBox(width: 8),
+          separatorBuilder: (_, __) => const SizedBox(width: Dimensions.spacingSmall),
           itemBuilder: (context, index) {
             final category = categories[index];
             final isSelected = category == selectedCategory;
