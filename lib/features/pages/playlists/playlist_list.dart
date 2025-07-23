@@ -29,7 +29,7 @@ class _PlaylistListPageState extends State<PlaylistListPage> {
     try {
       final response = await service.get('/chart/0/playlists');
       final list = response['data'] as List<dynamic>;
-      final loaded = list.map((json) => MediaCollection.fromJson(json, 'playlist')).toList();
+      final loaded = list.map((json) => MediaCollection.fromJson(json, type:'playlist')).toList();
 
       setState(() {
         playlists = loaded;

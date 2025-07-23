@@ -25,7 +25,7 @@ class AlbumPage extends StatelessWidget {
         }
 
         final data = state.data as Map<String, dynamic>;
-        final collection = MediaCollection.fromJson(data, 'album');
+        final collection = MediaCollection.fromJson(data, type:'album');
 
         return CollectionContent(collection: collection);
       },

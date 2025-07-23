@@ -1,6 +1,5 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-
 import '../../data/domain/models/audio_track.dart';
 
 class TrackPlayCountLineChart extends StatelessWidget {
@@ -30,43 +29,32 @@ class TrackPlayCountLineChart extends StatelessWidget {
               interval: 1,
               reservedSize: 50,
               getTitlesWidget: (double value, TitleMeta meta) {
-                int i = value.toInt();
+                final i = value.toInt();
                 if (i < 0 || i >= tracks.length) return const SizedBox.shrink();
-
-                return SideTitleWidget(
-                  meta: meta,
+                return Padding(
+                  padding: const EdgeInsets.only(top: 6),
                   child: Text(
                     tracks[i].title,
-                    style: const TextStyle(color: Colors.white, fontSize: 10),
+                    style: const TextStyle(color: Colors.white70, fontSize: 10),
                     overflow: TextOverflow.ellipsis,
                   ),
                 );
               },
             ),
           ),
-          leftTitles: AxisTitles(
-            sideTitles: SideTitles(
-              showTitles: true,
-              reservedSize: 40,
-              getTitlesWidget: (double value, TitleMeta meta) {
-                return SideTitleWidget(
-                  meta: meta,
-                  child: Text(
-                    value.toInt().toString(),
-                    style: const TextStyle(color: Colors.white, fontSize: 12),
-                  ),
-                );
-              },
-            ),
-          ),
-          rightTitles: AxisTitles(
-            sideTitles: SideTitles(showTitles: false),
-          ),
-          topTitles: AxisTitles(
-            sideTitles: SideTitles(showTitles: false),
+          leftTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+          rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+          topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+        ),
+        gridData: FlGridData(
+          show: true,
+          drawHorizontalLine: true,
+          horizontalInterval: maxPlayCount / 4,
+          getDrawingHorizontalLine: (value) => FlLine(
+            color: Colors.white.withOpacity(0.1),
+            strokeWidth: 1,
           ),
         ),
-        gridData: FlGridData(show: true),
         borderData: FlBorderData(show: false),
         lineBarsData: [
           LineChartBarData(
@@ -76,12 +64,19 @@ class TrackPlayCountLineChart extends StatelessWidget {
                 .map((e) => FlSpot(e.key.toDouble(), e.value.toDouble()))
                 .toList(),
             isCurved: true,
-            color: Colors.greenAccent,
-            barWidth: 3,
+            gradient: LinearGradient(
+              colors: [Colors.greenAccent, Colors.green],
+            ),
+            barWidth: 4,
+            isStrokeCapRound: true,
             dotData: FlDotData(show: true),
             belowBarData: BarAreaData(
               show: true,
-              color: Colors.greenAccent.withOpacity(0.3),
+              gradient: LinearGradient(
+                colors: [Colors.greenAccent.withOpacity(0.3), Colors.green.withOpacity(0.05)],
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+              ),
             ),
           ),
         ],

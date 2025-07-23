@@ -25,7 +25,7 @@ class PlaylistPage extends StatelessWidget {
         }
 
         final data = state.data as Map<String, dynamic>;
-        final collection = MediaCollection.fromJson(data, 'playlist');
+        final collection = MediaCollection.fromJson(data, type:'playlist');
 
         return CollectionContent(collection: collection);
       },

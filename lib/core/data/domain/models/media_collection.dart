@@ -13,26 +13,21 @@ class MediaCollection {
     required this.type,
   });
 
-  factory MediaCollection.fromJson(Map<String, dynamic> json, String type) {
+  factory MediaCollection.fromJson(Map<String, dynamic> json, {required String type}) {
     String getSubtitle() {
       if (type == 'album') {
-        if (json['artist'] != null && json['artist'] is Map<String, dynamic>) {
-          return json['artist']['name'] ?? '';
-        }
-        return '';
-      } else {
-        if (json['creator'] != null && json['creator'] is Map<String, dynamic>) {
-          return json['creator']['name'] ?? '';
-        }
-        return '';
+        return (json['artist']?['name'] ?? '') as String;
+      } else if (type == 'playlist') {
+        return (json['creator']?['name'] ?? '') as String;
       }
+      return '';
     }
 
     String getCoverUrl() {
       if (type == 'album') {
-        return json['cover_xl'] ?? '';
+        return json['cover_xl'] ?? json['cover_big'] ?? '';
       } else {
-        return json['picture_xl'] ?? '';
+        return json['picture_xl'] ?? json['picture_big'] ?? '';
       }
     }
 
@@ -44,5 +39,4 @@ class MediaCollection {
       type: type,
     );
   }
-
 }
