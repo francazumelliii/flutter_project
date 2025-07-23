@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_project/core/widgets/audio_player/global_audio_player.dart';
 import 'package:flutter_project/features/pages/search/search_content.dart';
 import 'package:provider/provider.dart';
 
@@ -65,13 +66,12 @@ class _SearchPageState extends State<SearchPage> {
       if (!mounted) return;
       setState(() => tracks = loaded);
 
-      // ✅ aggiorna la playlist interna del player
-      final audioCtrl = context.read<AudioPlayerController>();
-      audioCtrl.setPlaylist(loaded);
+      // NON aggiornare la playlist qui per non interrompere la riproduzione corrente
+      // final audioCtrl = context.read<AudioPlayerController>();
+      // audioCtrl.setPlaylist(loaded);
     } catch (e) {
       if (!mounted) return;
       setState(() => tracks = []);
-      // se vuoi: context.read<AudioPlayerController>().setPlaylist([]);
     } finally {
       if (mounted) {
         setState(() => loading = false);
@@ -110,6 +110,7 @@ class _SearchPageState extends State<SearchPage> {
           audioCtrl: audioCtrl,
         ),
       ),
+      bottomNavigationBar: const GlobalAudioPlayer(),
     );
   }
 }

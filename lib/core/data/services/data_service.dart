@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class DataService {
-  // Base URL Deezer + proxy CORS già inclusi
+  // Base URL Deezer + proxy x CORS
   static const String _baseUrl = 'https://corsproxy.io/?https://api.deezer.com';
 
   Future<dynamic> get(String endpoint, {Map<String, String>? headers}) async {

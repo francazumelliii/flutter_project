@@ -3,6 +3,8 @@ import 'package:just_audio/just_audio.dart';
 
 import '../../data/domain/controllers/audio_player_controller.dart';
 import '../../utils/dimensions.dart';
+import 'track_info.dart';
+import 'playback_buttons.dart';
 
 class PlayerControls extends StatelessWidget {
   const PlayerControls({super.key, required this.controller});
@@ -11,32 +13,27 @@ class PlayerControls extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final player = controller.audioPlayer;
+    final currentTrack = controller.currentTrack;
 
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        IconButton(
-          icon: const Icon(Icons.skip_previous),
-          onPressed: controller.previousTrack,
-        ),
-        SizedBox(width: Dimensions.spacingMedium),
-        StreamBuilder<PlayerState>(
-          stream: player.playerStateStream,
-          builder: (context, snapshot) {
-            final isPlaying = snapshot.data?.playing ?? false;
-            return IconButton(
-              icon: Icon(isPlaying ? Icons.pause : Icons.play_arrow),
-              onPressed: isPlaying ? controller.pause : controller.resume,
-            );
-          },
-        ),
-        SizedBox(width: Dimensions.spacingMedium),
-        IconButton(
-          icon: const Icon(Icons.skip_next),
-          onPressed: controller.nextTrack,
-        ),
-      ],
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: Colors.grey[900],
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: TrackInfo(
+              track: currentTrack,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+          const SizedBox(width: 12),
+          PlaybackButtons(controller: controller),
+        ],
+      ),
     );
   }
 }

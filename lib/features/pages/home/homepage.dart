@@ -79,7 +79,9 @@ class _HomePageState extends State<HomePage> {
   }
 
   void onTrackSelected(int index) {
-    context.read<AudioPlayerController>().playTrack(index);
+    final player = context.read<AudioPlayerController>();
+    player.setPlaylist(tracks);
+    player.playTrack(index);
   }
 
   void onAlbumTap(int albumId) {
