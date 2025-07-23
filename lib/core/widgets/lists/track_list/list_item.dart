@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_project/core/widgets/lists/track_list/track_index.dart';
-import 'package:flutter_project/core/widgets/lists/track_list/track_info.dart';
 import '../../../data/domain/models/audio_track.dart';
 import '../../inputs/row_play_button.dart';
 import 'album_cover.dart';
+import 'track_index.dart';
+import 'track_info.dart';
 
 class TrackListItem extends StatelessWidget {
   const TrackListItem({

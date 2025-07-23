@@ -5,7 +5,6 @@ import '../../../core/widgets/inputs/category_filter.dart';
 import '../../../core/widgets/inputs/search_bar.dart';
 import '../../../core/widgets/lists/track_list/track_list.dart';
 
-
 class SearchContent extends StatelessWidget {
   final TextEditingController controller;
   final Function(String) onSearch;
@@ -28,6 +27,12 @@ class SearchContent extends StatelessWidget {
     required this.audioCtrl,
   });
 
+  void _onTrackTap(int index) {
+    // Aggiorna la playlist e fai partire la traccia selezionata
+    audioCtrl.setPlaylist(tracks);
+    audioCtrl.playTrack(index);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -44,7 +49,10 @@ class SearchContent extends StatelessWidget {
         Expanded(
           child: loading
               ? const Center(child: CircularProgressIndicator())
-              : TrackList(tracks: tracks),
+              : TrackList(
+            tracks: tracks,
+            onTap: _onTrackTap,
+          ),
         ),
       ],
     );

@@ -56,6 +56,12 @@ class _CollectionContentState extends State<CollectionContent> {
     }
   }
 
+  void _onTrackSelected(int index) {
+    final audioCtrl = context.read<AudioPlayerController>();
+    audioCtrl.setPlaylist(tracks);
+    audioCtrl.playTrack(index);
+  }
+
   @override
   Widget build(BuildContext context) {
     if (loading) {
@@ -77,12 +83,17 @@ class _CollectionContentState extends State<CollectionContent> {
             subtitle: widget.collection.subtitle,
             onPlay: () {
               if (tracks.isNotEmpty) {
-                context.read<AudioPlayerController>().playTrack(0);
+                final audioCtrl = context.read<AudioPlayerController>();
+                audioCtrl.setPlaylist(tracks);
+                audioCtrl.playTrack(0);
               }
             },
           ),
           Expanded(
-            child: TrackList(tracks: tracks),
+            child: TrackList(
+              tracks: tracks,
+              onTap: _onTrackSelected,
+            ),
           ),
         ],
       ),

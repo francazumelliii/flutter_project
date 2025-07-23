@@ -8,7 +8,6 @@
       "version": "1.0.0+1",
       "dependencies": [
         "audio_session",
-        "charts_flutter",
         "cupertino_icons",
         "fl_chart",
         "flutter",
@@ -82,18 +81,6 @@
         "meta",
         "sky_engine",
         "vector_math"
-      ]
-    },
-    {
-      "name": "charts_flutter",
-      "version": "0.12.0",
-      "dependencies": [
-        "charts_common",
-        "collection",
-        "flutter",
-        "intl",
-        "logging",
-        "meta"
       ]
     },
     {
@@ -331,17 +318,6 @@
       "dependencies": []
     },
     {
-      "name": "charts_common",
-      "version": "0.12.0",
-      "dependencies": [
-        "collection",
-        "intl",
-        "logging",
-        "meta",
-        "vector_math"
-      ]
-    },
-    {
       "name": "equatable",
       "version": "2.0.7",
       "dependencies": [
@@ -506,19 +482,6 @@
       "version": "1.1.0",
       "dependencies": [
         "meta",
-        "path"
-      ]
-    },
-    {
-      "name": "logging",
-      "version": "1.3.0",
-      "dependencies": []
-    },
-    {
-      "name": "intl",
-      "version": "0.17.0",
-      "dependencies": [
-        "clock",
         "path"
       ]
     }
