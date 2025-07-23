@@ -62,12 +62,21 @@ class _SearchPageState extends State<SearchPage> {
       final list = result['data'] as List;
       final loaded = list.map((e) => AudioTrack.fromJson(e)).toList();
 
+      if (!mounted) return;
       setState(() => tracks = loaded);
-    } catch (e) {
-      setState(() => tracks = []);
-    }
 
-    setState(() => loading = false);
+      // ✅ aggiorna la playlist interna del player
+      final audioCtrl = context.read<AudioPlayerController>();
+      audioCtrl.setPlaylist(loaded);
+    } catch (e) {
+      if (!mounted) return;
+      setState(() => tracks = []);
+      // se vuoi: context.read<AudioPlayerController>().setPlaylist([]);
+    } finally {
+      if (mounted) {
+        setState(() => loading = false);
+      }
+    }
   }
 
   void _onSearch(String query) => _fetchTracks(query: query);

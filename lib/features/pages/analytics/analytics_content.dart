@@ -32,14 +32,14 @@ class AnalyticsContent extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  SectionTitle(text: 'Top Tracks Bar Chart'),
+                  SectionTitle(text: 'Top Tracks'),
                   SizedBox(
                     height: 200,
                     child: TopTracksBarChart(tracks: topTracks),
                   ),
                   Dimensions.verticalExtraLarge,
 
-                  SectionTitle(text: 'Track Play Count Line Chart'),
+                  SectionTitle(text: 'Most Listened Songs'),
                   SizedBox(
                     height: 200,
                     child: TrackPlayCountLineChart(
@@ -49,7 +49,7 @@ class AnalyticsContent extends StatelessWidget {
                   ),
                   Dimensions.verticalExtraLarge,
 
-                  SectionTitle(text: 'Track Play Pie Chart'),
+                  SectionTitle(text: 'Most Listened'),
                   SizedBox(
                     height: 220,
                     child: TrackPlayPieChart(

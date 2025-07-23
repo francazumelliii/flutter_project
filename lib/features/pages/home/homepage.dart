@@ -45,6 +45,7 @@ class _HomePageState extends State<HomePage> {
         imageUrl: 'https://e-cdns-images.dzcdn.net/images/cover/${t['album']?['md5_image']}/250x250-000000-80-0-0.jpg',
         audioPreviewUrl: t['preview'] ?? '',
         albumId: t['album']?['id'] ?? 0,
+        artistId: t['artist']?['id'] ?? 0,
       );
     }).toList();
 
